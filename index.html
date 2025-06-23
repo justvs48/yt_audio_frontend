@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Playlist MP3 Downloader</title>
+</head>
+<body style="font-family: sans-serif; padding: 2rem;">
+  <h2>🎵 Download YouTube Playlist as MP3</h2>
+
+  <input type="text" id="url" placeholder="Paste playlist URL here" style="width: 80%; padding: 8px;">
+  <br><br>
+  <button onclick="download()" style="padding: 10px 20px;">Download</button>
+
+  <pre id="output" style="margin-top: 20px; white-space: pre-wrap;"></pre>
+
+  <script>
+    async function download() {
+      const url = document.getElementById("url").value;
+      const output = document.getElementById("output");
+      output.textContent = "⏳ Sending download request...";
+
+      try {
+        const response = await fetch("https://yt-audio-downloader-1.onrender.com/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: url })
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          output.textContent = `✅ Success: Playlist downloaded.\nFolder ID: ${result.message}`;
+        } else {
+          output.textContent = `❌ Error: ${result.message}`;
+        }
+      } catch (err) {
+        output.textContent = "❌ Network error or backend unavailable.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
